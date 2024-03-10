@@ -13,6 +13,9 @@ def getName(namePos: list):
     pt.tripleClick()
     pt.keyDown('shift')
     pt.moveTo(namePos[2], namePos[3])
+    pt.click()
+    pt.keyUp('shift')
+
     pt.hotkey('command', 'c')
     pt.click()
     clipboard_s = tkinter.Tk().clipboard_get()
@@ -21,27 +24,35 @@ def getName(namePos: list):
     return clipboard_s
 
 def page_extract(name,buttonPos:list, printPos:list, savePos:list, nextPos:list):
-    
-
-    
     #1. click showall button
     pt.moveTo(buttonPos[0], buttonPos[1])
-    pt.click()
-    pt.hotkey('command', 'p')
+    print("button!!!")
+
     
+    pt.doubleClick()
+    
+    
+    sleep(10)
+    
+    pt.hotkey('command', 'p')
+
     #Name file before saving
     pt.moveTo(printPos[0], printPos[1])
     pt.click()
+    sleep(2)
+    print("WRITE")
     pt.write(name)
+    # # pt.hotkey("command", "v")
    
     pt.moveTo(savePos[0], savePos[1])
-    pt.click()
-    
-    pt.scroll(-200)
-    # Move to next exercise
-    pt.moveTo(nextPos[0], nextPos[1])
-    pt.click()
-    
+    # pt.click()
+    # sleep(2)
+    # pt.scroll(-200)
+    # # Move to next exercise  
+    # pt.moveTo(nextPos[0], nextPos[1])
+    # pt.click()
+    # sleep(2)
+
 # def getAddName(tablePos)-> int:
 #     pt.moveTo(tablePos[0], tablePos[1])
 #     pt.click()
@@ -56,7 +67,24 @@ def page_extract(name,buttonPos:list, printPos:list, savePos:list, nextPos:list)
 #     # Converting the extracted string to an integer
 #     return number
 
-def checkNext(nextPos: list, name):
+def getNextName(nextPos: list):
+    # TODO: It should be on the left of nextpos instead of exactly at nextpos
+    pt.moveTo(nextPos[0], nextPos[1])
+    pt.tripleClick()
+    pt.hotkey("command", "c")
+    nextname = tkinter.Tk().clipboard_get()
+    return nextname
+
+def checkNext(nextPos: list, prevNextName)-> bool:
+    pt.moveTo(nextPos[0], nextPos[1])
+    pt.tripleClick()
+    pt.hotkey("command", "c")
+    current = tkinter.Tk().clipboard_get()
+    if current == prevNextName:
+        return False
+    else:
+        return True
+
     
 def start():
     
@@ -65,23 +93,31 @@ def start():
     
     #TODO: PASS IN NEXT AND BUTTON POS DIFFERENTLY FFOM CONSTANT
     tablePos = [747, 354]
-    namePos = [683, 237, 800, 261] # first line, shift + rightside of second lind
+    namePos = [683, 237, 840, 261] # first line, shift + rightside of second lind
     printPos = [1381, 721]
-    buttonPos = [1000, 620]
+    buttonPos = [1020, 640]
     savePos = [1342, 633]
     nextPos = [1289, 625]
-    addNameR = "R"
-    # nextPos = 
-    
+    saveAs = [1075,235]
+    name,prevname= ".",""
     #One round of extracting
-    name = getName(namePos)
-    checkNext()
-    page_extract(name, buttonPos, printPos, savePos, nextPos, tablePos, nextPos)
+    # while True:
     
+    # pt.moveTo(buttonPos[0], buttonPos[1])
+    # pt.click()
+
+    # sleep(4)
+    # print("button!!!")
+    
+    name = getName(namePos)
+    # checkNext()
+    if name==prevname:
+        return
+    
+    page_extract(name, buttonPos, printPos, savePos, nextPos)
+    prevname = name
     
     sleep(5)
-    
-    
     print("done")
 
 sleep(2)
@@ -90,4 +126,4 @@ sleep(2)
 mycurrent = pt.position()
 print(mycurrent)
 
-# start()
+start()
